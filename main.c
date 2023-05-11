@@ -2,28 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "linkedlist.c"
-#include "Process.h"
 #include "Device.h"
 #include "Job.h"
-#include "Job.c"
 #include "System.h"
-//#include "MemoryResource.h"
 #include "command.h"
-//#include "Queue.h"
 
 //Global Variables
 
-//ask if holding queues should be pointers
-Queue* hold_queue1;
-Queue* hold_queue2;
-
-//should these be pointers?
-Queue ready_queue;
-Queue wait_queue;
-
 //Device devices[MAX_DEVICES];
-Process process_table[MAX_PROCESSES];
+//Process process_table[MAX_PROCESSES];
 
 int time_slice = 4;
 int current_time = 0;
@@ -31,13 +18,13 @@ int available_memory = 256;
 int num_processes = 0;
 
 //sorting hold queue based on SJF algorithm
-bool sjf_compare(Process p1, Process p2){
+/* bool sjf_compare(Process p1, Process p2){
 	return p1.burst_time < p2.burst_time;
-}
+} */
 
-bool fifo_compare(Process p1, Process p2){
+/* bool fifo_compare(Process p1, Process p2){
 	return p1.arrival_time < p2.arrival_time;
-}
+} */
 
 //adding process to hold queue
 /* void add_to_hold_queue(Process p, string algorithm){
@@ -46,7 +33,7 @@ bool fifo_compare(Process p1, Process p2){
 		if(algorithm == "sjf"){
 			std::sort(hold_queue.begin(), hold_queue.end(), sjf_compare);
 		}
-		else if (/*algorithm == "fifo"){
+		else if (algorithm == "fifo"){
 			std::sort(hold_queue.begin(), hold_queue.end(), fifo_compare);
 		}
 		else{
@@ -60,8 +47,6 @@ bool fifo_compare(Process p1, Process p2){
 
 int main(){
 	//struct Devices tmp;
-	hold_queue1 = newQueue(1);
-	hold_queue2 = newQueue(2);
 
 	System *system;
 
@@ -103,22 +88,25 @@ int main(){
 			case 'COMMAND_TYPE_A': {
 				Command* info = command;
 
-				Job job = {info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
+				Job* job = {info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
 				//need to incorporate jobs?? FIFO? SJF?
-				if(job.needMemory > system->totalMemory || job.needDevice > system->totalDevice){
+				if(job->needMemory > system->totalMemory || job->needDevice > system->totalDevice){
 					printf("job is rejected, resource is not enough");
 				}
-				if(system->curMemory >= job.needMemory){
+				if(system->curMemory >= job->needMemory){
 					printf("adding job to ready queue");
 					//push job to readyqueue
-					//system->curMemory = system->totalMemory - readyQueue totalMemory
+					pushQueue(system->readyQueue, job);
+					//system->curMemory = system->totalMemory - readyQueue->totalMemory
 				}
 				else{
-					if(job.priority == 1){
-						//push job into hold queue 1
+					if(job->priority == 1){
+						//push job into hold queue 1 SJF 
+						pushQueue(system->holdQueue1, job);
 					}
 					else{
-						//push job into hold queue 2
+						//push job into hold queue 2 FIFO 
+						pushQueue(system->holdQueue2, job);
 					}
 				}
 
