@@ -40,13 +40,13 @@ bool fifo_compare(Process p1, Process p2){
 }
 
 //adding process to hold queue
-void add_to_hold_queue(Process p, string algorithm){
+/* void add_to_hold_queue(Process p, string algorithm){
 	if(available_memory < p.memory_required){
 		hold_queue.push_back(p);
 		if(algorithm == "sjf"){
 			std::sort(hold_queue.begin(), hold_queue.end(), sjf_compare);
 		}
-		else if (algorithm == "fifo"){
+		else if (/*algorithm == "fifo"){
 			std::sort(hold_queue.begin(), hold_queue.end(), fifo_compare);
 		}
 		else{
@@ -54,8 +54,7 @@ void add_to_hold_queue(Process p, string algorithm){
 			p.time_left = p.burst_time;
 			ready_queue.push(p);
 		}
-	}
-}
+	} */
 
 
 
@@ -70,7 +69,7 @@ int main(){
 	//reading input files function
 	char file[500];
 	
-	string file_name; //ask about string error
+	char file_name[100]; //ask about string error
 
 	//opening file
 	FILE* ptr = fopen(file_name, "r");
@@ -155,14 +154,6 @@ int main(){
 	}
 
 	
-}
-
-
-
-
-
-
-
 }
 
 
